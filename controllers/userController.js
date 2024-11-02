@@ -52,7 +52,31 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
+//======================== LOGIN USER ========================//
 
+// @desc Login a user
+// @route POST /api/users/login
+// @access PUBLIC
+
+const loginUser = asyncHandler(async (req, res) => {
+  const { username, password } = req.body;
+
+  const user = await User.findOne({ username });
+
+  if (user && (await bcrypt.compare(password, user.password))) {
+    res.json({
+      _id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      token: generateToken(user._id),
+    });
+  } else {
+    res.status(400);
+    throw new Error("Invalid credentials");
+  }
+
+});
 
 // Generate JWT
 const generateToken = (id) => {
