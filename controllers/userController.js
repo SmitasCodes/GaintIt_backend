@@ -11,7 +11,7 @@ const asyncHandler = require("express-async-handler");
 
 const registerUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
-
+  console.log("GETS CALLED")
   if (!username || !email || !password) {
     res.status(400);
     throw new Error("Please enter all fields");
@@ -30,12 +30,12 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
 
   const user = await User.create({
     username,
     email,
     password: hashedPassword,
-    role,
   });
 
   if (user) {

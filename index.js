@@ -10,3 +10,9 @@ connectDB();
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/api/users", require("./routes/usersRoutes"));
+
+app.listen(port, () => {
+  console.log(`Server is running on PORT ${port}`);
+});
