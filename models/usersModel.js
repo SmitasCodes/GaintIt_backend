@@ -26,7 +26,7 @@ const User = mongoose.model(
       },
       role: {
         type: String,
-        enum: ["user", "admin"], // Specify allowed roles
+        enum: ["user", "admin"],
         default: "user",
       },
     },
