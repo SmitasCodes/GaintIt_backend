@@ -3,7 +3,7 @@ const asyncHandler = require("express-async-handler");
 
 const addWorkoutTemplate = asyncHandler(async (req, res) => {
   const { name, exercises } = req.body;
-
+  console.log("CAL:S")
   if (!name) {
     res.status(400);
     throw new Error("Please enter your workout template name!");
@@ -22,11 +22,15 @@ const addWorkoutTemplate = asyncHandler(async (req, res) => {
 
   if (workoutTemplate) {
     res.status(201).json({
-      name: workoutTemplate.exercises,
-      exercises: workoutTemplate.exercises
+      name: workoutTemplate.name,
+      exercises: workoutTemplate.exercises,
     });
-  } else{
+  } else {
     res.status(400);
     throw new Error("Invalid workout template data");
   }
 });
+
+module.exports = {
+  addWorkoutTemplate,
+};

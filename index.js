@@ -12,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/users", require("./routes/usersRoutes"));
+app.use("/api/workoutTemplate", require("./routes/workoutTemplateRoutes"));
 
 app.listen(port, () => {
   console.log(`Server is running on PORT ${port}`);
