@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const User = require("../models/usersModel");
+const User = require("../models/userModel");
 const asyncHandler = require("express-async-handler");
 
 //======================== REGISTER USER ========================//
@@ -19,7 +19,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const emailExist = await User.findOne({ email });
   if (emailExist) {
-    res.status(404);
+    res.status(400);
     throw new Error("User with same email exist");
   }
 
