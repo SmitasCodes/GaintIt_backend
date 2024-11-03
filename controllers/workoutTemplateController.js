@@ -51,6 +51,27 @@ const addWorkoutTemplate = asyncHandler(async (req, res) => {
 // @route GET /api/workout-template/
 // @access PRIVATE
 
+const getUserWorkoutTemplates = asyncHandler(async (req, res) => {
+  const user_id = req.user._id;
+
+  const workoutTemplates = await WorkoutTemplate.find({ user_id });
+
+  if (workoutTemplates && workoutTemplates.length > 0) {
+    const workoutTemplatesRes = workoutTemplates.map((template) => ({
+      name: template.name,
+      exercises: template.exercises.map((exercise) => exercise.exercise_name),
+    }));
+
+    res.status(200).json({
+      "workout-templates": workoutTemplatesRes,
+    });
+  } else {
+    res.status(404);
+    throw new Error("No workout template found");
+  }
+});
+
 module.exports = {
   addWorkoutTemplate,
+  getUserWorkoutTemplates,
 };
