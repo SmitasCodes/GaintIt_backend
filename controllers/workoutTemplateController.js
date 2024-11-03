@@ -9,12 +9,15 @@ const asyncHandler = require("express-async-handler");
 
 const addWorkoutTemplate = asyncHandler(async (req, res) => {
   const { name, exercises } = req.body;
+  const user_id = req.user._id;
+
   if (!name) {
     res.status(400);
     throw new Error("Please enter your workout template name!");
   }
 
-  const nameExist = await WorkoutTemplate.findOne({ name });
+  const nameExist = await WorkoutTemplate.findOne({ name, user_id });
+
   if (nameExist) {
     res.status(400);
     throw new Error("Workout template with same name exists!");
@@ -27,7 +30,7 @@ const addWorkoutTemplate = asyncHandler(async (req, res) => {
 
   const workoutTemplate = await WorkoutTemplate.create({
     name,
-    user_id: "672673a8fd96b6ca4e5bc75b",
+    user_id: req.user._id,
     exercises,
   });
 
@@ -47,8 +50,6 @@ const addWorkoutTemplate = asyncHandler(async (req, res) => {
 // @desc Gets all of the user workout templates
 // @route GET /api/workout-template/
 // @access PRIVATE
-
-
 
 module.exports = {
   addWorkoutTemplate,
