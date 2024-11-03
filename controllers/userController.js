@@ -6,7 +6,7 @@ const asyncHandler = require("express-async-handler");
 //======================== REGISTER USER ========================//
 
 // @desc Register new user
-// @route POST /api/users
+// @route POST /api/users/
 // @access PUBLIC
 
 const registerUser = asyncHandler(async (req, res) => {
