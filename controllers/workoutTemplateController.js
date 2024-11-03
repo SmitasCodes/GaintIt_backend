@@ -103,8 +103,37 @@ const getSpecificUserWorkoutTemplate = asyncHandler(async (req, res) => {
   }
 });
 
+//======================== DELETE SPECIFIC USER WORKOUT TEMPLATE ========================//
+
+// @desc Delete specific user workout template by id
+// @route GET /api/workout-template/:id
+// @access PRIVATE
+
+const deleteSpecificWorkoutTemplate = asyncHandler(async (req, res) => {
+  const templateId = req.params.id;
+  const user_id = req.user._id;
+
+  try {
+    const deleteTemplate = await WorkoutTemplate.deleteOne({
+      user_id,
+      _id: templateId,
+    });
+
+    if (deleteTemplate.deletedCount === 0) {
+      res.status(404);
+      throw new Error("Workout template not found");
+    }
+
+    res.status(200).json({ message: "Workout template deleted" });
+  } catch {
+    res.status(400);
+    throw new Error({ message: error.message });
+  }
+});
+
 module.exports = {
   addWorkoutTemplate,
   getUserWorkoutTemplates,
   getSpecificUserWorkoutTemplate,
+  deleteSpecificWorkoutTemplate,
 };
