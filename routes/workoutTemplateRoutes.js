@@ -3,12 +3,15 @@ const router = express.Router();
 const {
   addWorkoutTemplate,
   getUserWorkoutTemplates,
+  getSpecificUserWorkoutTemplate,
 } = require("../controllers/workoutTemplateController");
 const { protect } = require("../middleware/authMiddleware");
 
-// Route for creating a workout template
-router.route("/")
-    .post(protect, addWorkoutTemplate)
-    .get(protect, getUserWorkoutTemplates);
+router
+  .route("/")
+  .post(protect, addWorkoutTemplate)
+  .get(protect, getUserWorkoutTemplates);
+
+router.route("/:id").get(protect, getSpecificUserWorkoutTemplate);
 
 module.exports = router;

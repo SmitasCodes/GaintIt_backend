@@ -71,7 +71,40 @@ const getUserWorkoutTemplates = asyncHandler(async (req, res) => {
   }
 });
 
+//======================== GET SPECIFIC USER WORKOUT TEMPLATE ========================//
+
+// @desc Gets specific user workout template by id
+// @route GET /api/workout-template/:id
+// @access PRIVATE
+
+const getSpecificUserWorkoutTemplate = asyncHandler(async (req, res) => {
+  const templateId = req.params.id;
+  const user_id = req.user._id;
+
+  const workoutTemplate = await WorkoutTemplate.findOne({
+    _id: templateId,
+    user_id,
+  });
+
+  if (workoutTemplate) {
+    const workoutTemplateRes = {
+      name: workoutTemplate.name,
+      exercises: workoutTemplate.exercises.map(
+        (exercise) => exercise.exercise_name
+      ),
+    };
+
+    res.status(200).json({
+      "workout-template": workoutTemplateRes,
+    });
+  } else {
+    res.status(404);
+    throw new Error("No specific workout template found");
+  }
+});
+
 module.exports = {
   addWorkoutTemplate,
   getUserWorkoutTemplates,
+  getSpecificUserWorkoutTemplate,
 };
