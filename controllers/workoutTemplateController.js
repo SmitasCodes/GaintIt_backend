@@ -36,6 +36,7 @@ const addWorkoutTemplate = asyncHandler(async (req, res) => {
 
   if (workoutTemplate) {
     res.status(201).json({
+      _id: workoutTemplate._id,
       name: workoutTemplate.name,
       exercises: workoutTemplate.exercises,
     });
