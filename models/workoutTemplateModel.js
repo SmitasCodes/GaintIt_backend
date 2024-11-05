@@ -4,7 +4,7 @@ const WorkoutTemplate = mongoose.model(
   "WorkoutTemplate",
   new mongoose.Schema(
     {
-      name: { type: String, required: true},
+      name: { type: String, required: true },
       user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
