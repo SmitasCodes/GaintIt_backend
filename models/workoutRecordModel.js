@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const WorkoutRecord = mongoose.model(
-  "WorkoutTemplate",
+  "WorkoutRecord",
   new mongoose.Schema(
     {
       template_id: {
@@ -16,7 +16,7 @@ const WorkoutRecord = mongoose.model(
       },
       exercises: [
         {
-          exercise_template: {
+          exercise_id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "WorkoutTemplate.exercises",
             required: true,

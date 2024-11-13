@@ -79,11 +79,11 @@ const getUserWorkoutTemplates = asyncHandler(async (req, res) => {
 // @access PRIVATE
 
 const getSpecificUserWorkoutTemplate = asyncHandler(async (req, res) => {
-  const templateId = req.params.id;
+  const template_id = req.params.id;
   const user_id = req.user._id;
 
   const workoutTemplate = await WorkoutTemplate.findOne({
-    _id: templateId,
+    _id: template_id,
     user_id,
   });
 
@@ -111,13 +111,13 @@ const getSpecificUserWorkoutTemplate = asyncHandler(async (req, res) => {
 // @access PRIVATE
 
 const deleteSpecificWorkoutTemplate = asyncHandler(async (req, res) => {
-  const templateId = req.params.id;
+  const template_id = req.params.id;
   const user_id = req.user._id;
 
   try {
     const deleteTemplate = await WorkoutTemplate.deleteOne({
       user_id,
-      _id: templateId,
+      _id: template_id,
     });
 
     if (deleteTemplate.deletedCount === 0) {
@@ -132,9 +132,28 @@ const deleteSpecificWorkoutTemplate = asyncHandler(async (req, res) => {
   }
 });
 
+//======================== GET TEMPLATE EXERCISES ========================//
+
+// @desc Get template exercises
+// @route GET /api/workout-template/:id/exercises/
+// @access PRIVATE
+
+const getWorkoutTemplateExercises = asyncHandler(async (req, res) => {
+  const template_id = req.user.id;
+  const user_id = req.user._id;
+
+  const workoutTemplate = await WorkoutTemplate.findOne({
+    _id: template_id,
+    user_id: user_id,
+  });
+
+  console.log(workoutTemplate);
+});
+
 module.exports = {
   addWorkoutTemplate,
   getUserWorkoutTemplates,
   getSpecificUserWorkoutTemplate,
   deleteSpecificWorkoutTemplate,
+  getWorkoutTemplateExercises,
 };

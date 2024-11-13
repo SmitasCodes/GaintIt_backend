@@ -5,6 +5,7 @@ const {
   getUserWorkoutTemplates,
   getSpecificUserWorkoutTemplate,
   deleteSpecificWorkoutTemplate,
+  getWorkoutTemplateExercises,
 } = require("../controllers/workoutTemplateController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -17,5 +18,7 @@ router
   .route("/:id")
   .get(protect, getSpecificUserWorkoutTemplate)
   .delete(protect, deleteSpecificWorkoutTemplate);
+
+router.route("/:id/exercises").get(protect, getWorkoutTemplateExercises);
 
 module.exports = router;

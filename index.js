@@ -13,6 +13,7 @@ app.use(express.json());
 
 app.use("/api/users", require("./routes/usersRoutes"));
 app.use("/api/workout-template", require("./routes/workoutTemplateRoutes"));
+app.use("/api/workout-record", require("./routes/workoutRecordRoutes"));
 
 app.use(errorHandler);
 
