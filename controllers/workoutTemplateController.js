@@ -139,15 +139,15 @@ const deleteSpecificWorkoutTemplate = asyncHandler(async (req, res) => {
 // @access PRIVATE
 
 const getWorkoutTemplateExercises = asyncHandler(async (req, res) => {
-  const template_id = req.user.id;
+  const template_id = req.params.id;
   const user_id = req.user._id;
 
   const workoutTemplate = await WorkoutTemplate.findOne({
     _id: template_id,
-    user_id: user_id,
+    user_id,
   });
 
-  console.log(workoutTemplate);
+  
 });
 
 module.exports = {

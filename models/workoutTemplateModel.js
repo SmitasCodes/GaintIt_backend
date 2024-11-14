@@ -13,8 +13,6 @@ const WorkoutTemplate = mongoose.model(
       exercises: [
         {
           exercise_name: { type: String, required: true },
-          sets: { type: Number, default: 0 },
-          repetitions: { type: Number, default: 0 },
         },
       ],
     },
