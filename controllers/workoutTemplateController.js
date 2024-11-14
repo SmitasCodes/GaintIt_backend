@@ -147,7 +147,12 @@ const getWorkoutTemplateExercises = asyncHandler(async (req, res) => {
     user_id,
   });
 
-  
+  if (workoutTemplate) {
+    res.status(200).json({ exercises: workoutTemplate.exercises });
+  } else {
+    res.status(404);
+    throw new Error("No template exercises found");
+  }
 });
 
 module.exports = {
