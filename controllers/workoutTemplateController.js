@@ -58,13 +58,8 @@ const getUserWorkoutTemplates = asyncHandler(async (req, res) => {
   const workoutTemplates = await WorkoutTemplate.find({ user_id });
 
   if (workoutTemplates && workoutTemplates.length > 0) {
-    const workoutTemplatesRes = workoutTemplates.map((template) => ({
-      name: template.name,
-      exercises: template.exercises.map((exercise) => exercise.exercise_name),
-    }));
-
     res.status(200).json({
-      "workout-templates": workoutTemplatesRes,
+      "templates": workoutTemplates,
     });
   } else {
     res.status(404);
