@@ -59,7 +59,7 @@ const getUserWorkoutTemplates = asyncHandler(async (req, res) => {
 
   if (workoutTemplates && workoutTemplates.length > 0) {
     res.status(200).json({
-      "templates": workoutTemplates,
+      templates: workoutTemplates,
     });
   } else {
     res.status(404);
@@ -67,7 +67,40 @@ const getUserWorkoutTemplates = asyncHandler(async (req, res) => {
   }
 });
 
-//======================== GET SPECIFIC USER WORKOUT TEMPLATE ========================//
+//======================== UPDATE WORKOUT TEMPLATE ========================//
+
+// @desc Update workout template by template id
+// @route PUT /api/workout-template/:id
+// @access PRIVATE
+
+const updateWorkoutTemplate = asyncHandler(async (req, res) => {
+  const template_id = req.params.id;
+  const user_id = req.user._id;
+
+  if (!template_id) {
+    res.status(400);
+    throw new Error("Template ID is required");
+  }
+
+  try {
+    const result = await WorkoutTemplate.findOneAndUpdate (
+      { _id: template_id, user_id },
+      req.body
+    );
+
+    if (!result) {
+      res
+        .status(404)
+        .json({ message: "Template not found or no changes made" });
+    } else {
+      res.status(200).json({ message: "Template updated successfully" });
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+//======================== GET WORKOUT TEMPLATE ========================//
 
 // @desc Gets specific user workout template by id
 // @route GET /api/workout-template/:id
@@ -99,7 +132,7 @@ const getSpecificUserWorkoutTemplate = asyncHandler(async (req, res) => {
   }
 });
 
-//======================== DELETE SPECIFIC USER WORKOUT TEMPLATE ========================//
+//======================== DELETE WORKOUT TEMPLATE ========================//
 
 // @desc Delete specific user workout template by id
 // @route GET /api/workout-template/:id
@@ -153,6 +186,7 @@ const getWorkoutTemplateExercises = asyncHandler(async (req, res) => {
 module.exports = {
   addWorkoutTemplate,
   getUserWorkoutTemplates,
+  updateWorkoutTemplate,
   getSpecificUserWorkoutTemplate,
   deleteSpecificWorkoutTemplate,
   getWorkoutTemplateExercises,
