@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
+const Demo = require("../models/demoModel");
 const asyncHandler = require("express-async-handler");
 
 //======================== REGISTER USER ========================//
@@ -9,47 +10,61 @@ const asyncHandler = require("express-async-handler");
 // @route POST /api/users/
 // @access PUBLIC
 
-const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
-  if (!username || !email || !password) {
-    res.status(400);
-    throw new Error("Please enter all fields");
-  }
+const registerUser = (modelType) =>
+  asyncHandler(async (req, res) => {
+    const { username, email, password } = req.body;
 
-  const emailExist = await User.findOne({ email });
-  if (emailExist) {
-    res.status(400);
-    throw new Error("User with same email exist");
-  }
+    let Model;
+    switch (modelType) {
+      case "User":
+        Model = User;
+        break;
+      case "Demo":
+        Model = Demo;
+        break;
+      default:
+        return res.status(400).json({ message: "Invalid model type" });
+    }
 
-  const usernameExists = await User.findOne({ username });
-  if (usernameExists) {
-    res.status(400);
-    throw new Error("User with the same username exist");
-  }
+    if (!username || !email || !password) {
+      res.status(400);
+      throw new Error("Please enter all fields");
+    }
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
+    const emailExist = await modelType.findOne({ email });
+    if (emailExist) {
+      res.status(400);
+      throw new Error("User with same email exist");
+    }
 
-  const user = await User.create({
-    username,
-    email,
-    password: hashedPassword,
-  });
+    const usernameExists = await modelType.findOne({ username });
+    if (usernameExists) {
+      res.status(400);
+      throw new Error("User with same username exist");
+    }
 
-  if (user) {
-    res.status(201).json({
-      _id: user.id,
-      username: user.username,
-      email: user.email,
-      token: generateToken(user._id),
-      role: user.role,
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await modelType.create({
+      username,
+      email,
+      password: hashedPassword,
     });
-  } else {
-    res.status(400);
-    throw new Error("Invalid user data");
-  }
-});
+
+    if (user) {
+      res.status(201).json({
+        _id: user.id,
+        username: user.username,
+        email: user.email,
+        token: generateToken(user._id),
+        role: user.role,
+      });
+    } else {
+      res.status(400);
+      throw new Error("Invalid user data");
+    }
+  });
 
 //======================== LOGIN USER ========================//
 
@@ -74,7 +89,6 @@ const loginUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Invalid credentials");
   }
-
 });
 
 // Generate JWT
