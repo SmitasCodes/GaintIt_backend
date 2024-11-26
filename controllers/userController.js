@@ -10,34 +10,22 @@ const asyncHandler = require("express-async-handler");
 // @route POST /api/users/
 // @access PUBLIC
 
-const registerUser = (modelType) =>
+const registerUser = (Model) =>
   asyncHandler(async (req, res) => {
     const { username, email, password } = req.body;
-
-    let Model;
-    switch (modelType) {
-      case "User":
-        Model = User;
-        break;
-      case "Demo":
-        Model = Demo;
-        break;
-      default:
-        return res.status(400).json({ message: "Invalid model type" });
-    }
 
     if (!username || !email || !password) {
       res.status(400);
       throw new Error("Please enter all fields");
     }
 
-    const emailExist = await modelType.findOne({ email });
+    const emailExist = await Model.findOne({ email });
     if (emailExist) {
       res.status(400);
       throw new Error("User with same email exist");
     }
 
-    const usernameExists = await modelType.findOne({ username });
+    const usernameExists = await Model.findOne({ username });
     if (usernameExists) {
       res.status(400);
       throw new Error("User with same username exist");
@@ -46,7 +34,7 @@ const registerUser = (modelType) =>
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = await modelType.create({
+    const user = await Model.create({
       username,
       email,
       password: hashedPassword,
@@ -72,7 +60,7 @@ const registerUser = (modelType) =>
 // @route POST /api/users/login
 // @access PUBLIC
 
-const loginUser = asyncHandler(async (req, res) => {
+const loginUser = (modelType) =>asyncHandler(async (req, res) => {
   const { username, password } = req.body;
 
   const user = await User.findOne({ username });

@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../../models/userModel");
+const Demo = require("../../models/demoModel");
 const NOT_AUTHORIZED = "Not authorized";
 const NOT_AUTHORIZED_NO_TOKEN = "Not authorized, no token";
 
@@ -16,7 +17,15 @@ async function getUser(req) {
       }
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findById(decoded.id).select("-password");
+
+      let user = await User.findById(decoded.id).select("-password");
+
+      if (!user) {
+        user = await Demo.findById(decoded.id).select("-password");
+        if (!user) {
+          return { status: 404, response: "User not found in both collections" };
+        }
+      }
 
       return { status: 200, response: user };
     } catch (error) {
