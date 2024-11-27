@@ -77,8 +77,6 @@ const updateWorkoutTemplate = asyncHandler(async (req, res) => {
   const template_id = req.params.id;
   const user_id = req.user._id;
 
-  console.log(req.body)
-
   if (!template_id) {
     res.status(400);
     throw new Error("Template ID is required");

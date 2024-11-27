@@ -60,7 +60,7 @@ const registerUser = (Model) =>
 // @route POST /api/users/login
 // @access PUBLIC
 
-const loginUser = (modelType) =>asyncHandler(async (req, res) => {
+const loginUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
 
   const user = await User.findOne({ username });
