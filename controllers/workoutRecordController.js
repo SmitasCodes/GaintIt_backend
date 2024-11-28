@@ -67,6 +67,27 @@ const addWorkoutRecord = asyncHandler(async (req, res) => {
   res.status(201).json({ workoutRecord });
 });
 
+//======================== GET WORKOUTS RECORDS ========================//
+
+// @desc Gets all user workout records
+// @route POST /api/workout-record/
+// @access PRIVATE
+const getUserWorkoutRecords = asyncHandler(async (req, res) => {
+  const user_id = req.user._id;
+
+  const workoutRecords = await WorkoutRecord.find({ user_id });
+
+  if (workoutRecords && workoutRecords.length > 0) {
+    res.status(200).json({
+      records: workoutRecords,
+    });
+  } else {
+    res.status(404);
+    throw new Error("No workout records found");
+  }
+});
+
 module.exports = {
   addWorkoutRecord,
+  getUserWorkoutRecords,
 };
