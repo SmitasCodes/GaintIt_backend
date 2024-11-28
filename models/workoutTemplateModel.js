@@ -12,7 +12,7 @@ const WorkoutTemplate = mongoose.model(
       },
       exercises: [
         {
-          exercise_name: { type: String, required: true },
+          exercise_name: { type: String, required: true, unique: true },
         },
       ],
     },
