@@ -26,6 +26,10 @@ const WorkoutRecord = mongoose.model(
           weight: { type: Number, required: true },
         },
       ],
+      workout_date: {
+        type: Date,
+        default: Date.now,
+      },
     },
     {
       timestamps: true,

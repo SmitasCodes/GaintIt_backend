@@ -9,7 +9,7 @@ const asyncHandler = require("express-async-handler");
 // @access PRIVATE
 
 const addWorkoutRecord = asyncHandler(async (req, res) => {
-  const { template_id, exercises } = req.body;
+  const { template_id, exercises, workout_date } = req.body;
   const user_id = req.user._id;
 
   if (!template_id) {
@@ -50,6 +50,10 @@ const addWorkoutRecord = asyncHandler(async (req, res) => {
   if (invalidExercisesData.length > 0) {
     res.status(400);
     throw new Error("Some exercises have invalid data (weight, reps, sets).");
+  }
+
+  if (!workout_date || isNaN(new Date(workout_date).getTime())) {
+    throw new Error("Invalid date provided.");
   }
 
   const workoutRecord = await WorkoutRecord.create({
