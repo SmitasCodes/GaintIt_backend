@@ -9,6 +9,10 @@ const WorkoutRecord = mongoose.model(
         ref: "WorkoutTemplate",
         required: true,
       },
+      template_name: {
+        type: String,
+        required: true,
+      },
       user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -16,11 +20,7 @@ const WorkoutRecord = mongoose.model(
       },
       exercises: [
         {
-          exercise_id: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "WorkoutTemplate.exercises",
-            required: true,
-          },
+          exercise_name: { type: String, required: true },
           reps: { type: Number, required: true },
           weight: { type: Number, required: true },
         },
