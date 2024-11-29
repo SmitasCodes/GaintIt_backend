@@ -28,21 +28,26 @@ const addWorkoutTemplate = asyncHandler(async (req, res) => {
     throw new Error("Please add some exercises!");
   }
 
-  const workoutTemplate = await WorkoutTemplate.create({
-    name,
-    user_id: req.user._id,
-    exercises,
-  });
-
-  if (workoutTemplate) {
-    res.status(201).json({
-      _id: workoutTemplate._id,
-      name: workoutTemplate.name,
-      exercises: workoutTemplate.exercises,
+  try {
+    const workoutTemplate = await WorkoutTemplate.create({
+      name,
+      user_id: req.user._id,
+      exercises,
     });
-  } else {
-    res.status(400);
-    throw new Error("Invalid workout template data");
+
+    if (workoutTemplate) {
+      res.status(201).json({
+        _id: workoutTemplate._id,
+        name: workoutTemplate.name,
+        exercises: workoutTemplate.exercises,
+      });
+    } else {
+      res.status(400);
+      throw new Error("Invalid workout template data");
+    }
+  } catch (error) {
+    res.status(500);
+    console.log(error.message);
   }
 });
 
@@ -55,15 +60,20 @@ const addWorkoutTemplate = asyncHandler(async (req, res) => {
 const getUserWorkoutTemplates = asyncHandler(async (req, res) => {
   const user_id = req.user._id;
 
-  const workoutTemplates = await WorkoutTemplate.find({ user_id });
+  try {
+    const workoutTemplates = await WorkoutTemplate.find({ user_id });
 
-  if (workoutTemplates && workoutTemplates.length > 0) {
-    res.status(200).json({
-      templates: workoutTemplates,
-    });
-  } else {
-    res.status(404);
-    throw new Error("No workout template found");
+    if (workoutTemplates && workoutTemplates.length > 0) {
+      res.status(200).json({
+        templates: workoutTemplates,
+      });
+    } else {
+      res.status(404);
+      throw new Error("No workout template found");
+    }
+  } catch (error) {
+    res.status(500);
+    console.error(error.message);
   }
 });
 
@@ -83,20 +93,24 @@ const updateWorkoutTemplate = asyncHandler(async (req, res) => {
   }
 
   try {
-    const result = await WorkoutTemplate.findOneAndUpdate(
+    const updatedTemplate = await WorkoutTemplate.findOneAndUpdate(
       { _id: template_id, user_id },
       req.body
     );
 
-    if (!result) {
-      res
-        .status(404)
-        .json({ message: "Template not found or no changes made" });
+    if (!updatedTemplate) {
+      res.status(404);
+      throw new Error("Template not found or no changes made");
     } else {
-      res.status(200).json({ message: "Template updated successfully" });
+      res.status(200).json({
+        _id: updatedTemplate._id,
+        name: updatedTemplate.name,
+        exercises: updatedTemplate.exercises,
+      });
     }
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500);
+    console.error(error.message);
   }
 });
 
@@ -110,25 +124,30 @@ const getSpecificUserWorkoutTemplate = asyncHandler(async (req, res) => {
   const template_id = req.params.id;
   const user_id = req.user._id;
 
-  const workoutTemplate = await WorkoutTemplate.findOne({
-    _id: template_id,
-    user_id,
-  });
-
-  if (workoutTemplate) {
-    const workoutTemplateRes = {
-      name: workoutTemplate.name,
-      exercises: workoutTemplate.exercises.map(
-        (exercise) => exercise.exercise_name
-      ),
-    };
-
-    res.status(200).json({
-      "workout-template": workoutTemplateRes,
+  try {
+    const workoutTemplate = await WorkoutTemplate.findOne({
+      _id: template_id,
+      user_id,
     });
-  } else {
-    res.status(404);
-    throw new Error("No specific workout template found");
+
+    if (workoutTemplate) {
+      const workoutTemplateRes = {
+        name: workoutTemplate.name,
+        exercises: workoutTemplate.exercises.map(
+          (exercise) => exercise.exercise_name
+        ),
+      };
+
+      res.status(200).json({
+        "workout-template": workoutTemplateRes,
+      });
+    } else {
+      res.status(404);
+      throw new Error("No specific workout template found");
+    }
+  } catch (error) {
+    res.status(500);
+    console.error(error.message);
   }
 });
 
@@ -183,7 +202,7 @@ const getWorkoutTemplateExercises = asyncHandler(async (req, res) => {
       throw new Error("No template exercises found");
     }
   } catch (error) {
-    res.status(504);
+    res.status(500);
     console.error(error.message);
   }
 });

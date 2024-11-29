@@ -17,58 +17,68 @@ const addWorkoutRecord = asyncHandler(async (req, res) => {
     throw new Error("Template ID is required.");
   }
 
-  const template = await WorkoutTemplate.findOne({ _id: template_id, user_id });
-  if (!template) {
-    res.status(404);
-    throw new Error(
-      "Workout template not found or does not belong to this user."
+  try {
+    const template = await WorkoutTemplate.findOne({
+      _id: template_id,
+      user_id,
+    });
+    if (!template) {
+      res.status(404);
+      throw new Error(
+        "Workout template not found or does not belong to this user."
+      );
+    }
+
+    // Exercises validation, checking if exercises names matches templates exercises names. Also checking if reps/weight/sets are positive and if reps array length is equal sets array.
+    const templateExercisesNames = template.exercises.map(
+      (e) => e.exercise_name
     );
+    const invalidExercisesNames = exercises.filter(
+      (e) => !templateExercisesNames.includes(e.exercise_name)
+    );
+
+    if (invalidExercisesNames.length > 0) {
+      res.status(400);
+      throw new Error("Some exercises do not match the selected template.");
+    }
+
+    const invalidExercisesData = exercises.filter(
+      (e) =>
+        !e.weight ||
+        !e.reps ||
+        !e.sets ||
+        e.weight <= 0 ||
+        e.reps <= 0 ||
+        e.sets <= 0 ||
+        e.reps.length != e.sets
+    );
+
+    if (invalidExercisesData.length > 0) {
+      res.status(400);
+      throw new Error("Some exercises have invalid data (weight, reps, sets).");
+    }
+
+    if (!workout_date || isNaN(new Date(workout_date).getTime())) {
+      throw new Error("Invalid date provided.");
+    }
+
+    const workoutRecord = await WorkoutRecord.create({
+      template_id,
+      template_name: template.name,
+      user_id,
+      exercises,
+    });
+
+    if (!workoutRecord) {
+      res.status(500).json("Failed to create workout record.");
+      return;
+    }
+
+    res.status(201).json({ workoutRecord });
+  } catch (error) {
+    res.status(500);
+    console.error(error.message);
   }
-
-  // Exercises validation, checking if exercises names matches templates exercises names. Also checking if reps/weight/sets are positive and if reps array length is equal sets array.
-  const templateExercisesNames = template.exercises.map((e) => e.exercise_name);
-  const invalidExercisesNames = exercises.filter(
-    (e) => !templateExercisesNames.includes(e.exercise_name)
-  );
-
-  if (invalidExercisesNames.length > 0) {
-    res.status(400);
-    throw new Error("Some exercises do not match the selected template.");
-  }
-
-  const invalidExercisesData = exercises.filter(
-    (e) =>
-      !e.weight ||
-      !e.reps ||
-      !e.sets ||
-      e.weight <= 0 ||
-      e.reps <= 0 ||
-      e.sets <= 0 ||
-      e.reps.length != e.sets
-  );
-
-  if (invalidExercisesData.length > 0) {
-    res.status(400);
-    throw new Error("Some exercises have invalid data (weight, reps, sets).");
-  }
-
-  if (!workout_date || isNaN(new Date(workout_date).getTime())) {
-    throw new Error("Invalid date provided.");
-  }
-
-  const workoutRecord = await WorkoutRecord.create({
-    template_id,
-    template_name: template.name,
-    user_id,
-    exercises,
-  });
-
-  if (!workoutRecord) {
-    res.status(500).json("Failed to create workout record.");
-    return;
-  }
-
-  res.status(201).json({ workoutRecord });
 });
 
 //======================== GET WORKOUTS RECORDS ========================//
@@ -80,15 +90,20 @@ const addWorkoutRecord = asyncHandler(async (req, res) => {
 const getUserWorkoutRecords = asyncHandler(async (req, res) => {
   const user_id = req.user._id;
 
-  const workoutRecords = await WorkoutRecord.find({ user_id });
+  try {
+    const workoutRecords = await WorkoutRecord.find({ user_id });
 
-  if (workoutRecords && workoutRecords.length > 0) {
-    res.status(200).json({
-      records: workoutRecords,
-    });
-  } else {
-    res.status(404);
-    throw new Error("No workout records found");
+    if (workoutRecords && workoutRecords.length > 0) {
+      res.status(200).json({
+        records: workoutRecords,
+      });
+    } else {
+      res.status(404);
+      throw new Error("No workout records found");
+    }
+  } catch (error) {
+    res.status(500);
+    console.error(error.message);
   }
 });
 
@@ -108,17 +123,15 @@ const deleteWorkoutRecord = asyncHandler(async (req, res) => {
       _id: record_id,
     });
 
-    console.log(deleteRecord);
-
     if (deleteRecord.deletedCount === 0) {
       res.status(404);
       throw new Error("Workout record not found");
     }
 
     res.status(200).json({ message: "Workout record deleted" });
-  } catch(error) {
+  } catch (error) {
     res.status(500);
-    throw new Error( error.message );
+    throw new Error(error.message);
   }
 });
 
