@@ -83,7 +83,7 @@ const updateWorkoutTemplate = asyncHandler(async (req, res) => {
   }
 
   try {
-    const result = await WorkoutTemplate.findOneAndUpdate (
+    const result = await WorkoutTemplate.findOneAndUpdate(
       { _id: template_id, user_id },
       req.body
     );
@@ -154,9 +154,9 @@ const deleteSpecificWorkoutTemplate = asyncHandler(async (req, res) => {
     }
 
     res.status(200).json({ message: "Workout template deleted" });
-  } catch {
+  } catch (error) {
     res.status(400);
-    throw new Error({ message: error.message });
+    throw new Error(error.message);
   }
 });
 
@@ -170,16 +170,21 @@ const getWorkoutTemplateExercises = asyncHandler(async (req, res) => {
   const template_id = req.params.id;
   const user_id = req.user._id;
 
-  const workoutTemplate = await WorkoutTemplate.findOne({
-    _id: template_id,
-    user_id,
-  });
+  try {
+    const workoutTemplate = await WorkoutTemplate.findOne({
+      _id: template_id,
+      user_id,
+    });
 
-  if (workoutTemplate) {
-    res.status(200).json({ exercises: workoutTemplate.exercises });
-  } else {
-    res.status(404);
-    throw new Error("No template exercises found");
+    if (workoutTemplate) {
+      res.status(200).json({ exercises: workoutTemplate.exercises });
+    } else {
+      res.status(404);
+      throw new Error("No template exercises found");
+    }
+  } catch (error) {
+    res.status(504);
+    console.error(error.message);
   }
 });
 

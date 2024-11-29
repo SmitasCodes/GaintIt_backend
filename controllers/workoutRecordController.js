@@ -76,6 +76,7 @@ const addWorkoutRecord = asyncHandler(async (req, res) => {
 // @desc Gets all user workout records
 // @route POST /api/workout-record/
 // @access PRIVATE
+
 const getUserWorkoutRecords = asyncHandler(async (req, res) => {
   const user_id = req.user._id;
 
@@ -96,17 +97,18 @@ const getUserWorkoutRecords = asyncHandler(async (req, res) => {
 // @desc Delete workout record
 // @route POST /api/workout-record/:id
 // @access PRIVATE
+
 const deleteWorkoutRecord = asyncHandler(async (req, res) => {
   const record_id = req.params.id;
   const user_id = req.user._id;
 
-  console.log(record_id);
-  console.log(user_id);
   try {
     const deleteRecord = await WorkoutRecord.deleteOne({
       user_id,
       _id: record_id,
     });
+
+    console.log(deleteRecord);
 
     if (deleteRecord.deletedCount === 0) {
       res.status(404);
@@ -114,9 +116,9 @@ const deleteWorkoutRecord = asyncHandler(async (req, res) => {
     }
 
     res.status(200).json({ message: "Workout record deleted" });
-  } catch {
-    res.status(400);
-    throw new Error({ message: error.message });
+  } catch(error) {
+    res.status(500);
+    throw new Error( error.message );
   }
 });
 
