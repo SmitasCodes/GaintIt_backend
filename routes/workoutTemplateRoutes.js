@@ -3,8 +3,8 @@ const router = express.Router();
 const {
   addWorkoutTemplate,
   getUserWorkoutTemplates,
-  getSpecificUserWorkoutTemplate,
-  deleteSpecificWorkoutTemplate,
+  getUserWorkoutTemplate,
+  deleteWorkoutTemplate,
   getWorkoutTemplateExercises,
   updateWorkoutTemplate,
 } = require("../controllers/workoutTemplateController");
@@ -17,9 +17,9 @@ router
 
 router
   .route("/:id")
-  .get(protect, getSpecificUserWorkoutTemplate)
+  .get(protect, getUserWorkoutTemplate)
   .put(protect, updateWorkoutTemplate)
-  .delete(protect, deleteSpecificWorkoutTemplate);
+  .delete(protect, deleteWorkoutTemplate);
 
 router.route("/:id/exercises").get(protect, getWorkoutTemplateExercises);
 

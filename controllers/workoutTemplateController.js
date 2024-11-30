@@ -116,11 +116,11 @@ const updateWorkoutTemplate = asyncHandler(async (req, res) => {
 
 //======================== GET WORKOUT TEMPLATE ========================//
 
-// @desc Gets specific user workout template by id
+// @desc Get user workout template by id
 // @route GET /api/workout-template/:id
 // @access PRIVATE
 
-const getSpecificUserWorkoutTemplate = asyncHandler(async (req, res) => {
+const getUserWorkoutTemplate = asyncHandler(async (req, res) => {
   const template_id = req.params.id;
   const user_id = req.user._id;
 
@@ -143,7 +143,7 @@ const getSpecificUserWorkoutTemplate = asyncHandler(async (req, res) => {
       });
     } else {
       res.status(404);
-      throw new Error("No specific workout template found");
+      throw new Error("Workout template not found");
     }
   } catch (error) {
     res.status(500);
@@ -153,11 +153,11 @@ const getSpecificUserWorkoutTemplate = asyncHandler(async (req, res) => {
 
 //======================== DELETE WORKOUT TEMPLATE ========================//
 
-// @desc Delete specific user workout template by id
+// @desc Delete user workout template by id
 // @route GET /api/workout-template/:id
 // @access PRIVATE
 
-const deleteSpecificWorkoutTemplate = asyncHandler(async (req, res) => {
+const deleteWorkoutTemplate = asyncHandler(async (req, res) => {
   const template_id = req.params.id;
   const user_id = req.user._id;
 
@@ -211,7 +211,7 @@ module.exports = {
   addWorkoutTemplate,
   getUserWorkoutTemplates,
   updateWorkoutTemplate,
-  getSpecificUserWorkoutTemplate,
-  deleteSpecificWorkoutTemplate,
+  getUserWorkoutTemplate,
+  deleteWorkoutTemplate,
   getWorkoutTemplateExercises,
 };
