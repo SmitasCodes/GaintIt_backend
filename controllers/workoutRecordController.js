@@ -12,6 +12,11 @@ const addWorkoutRecord = asyncHandler(async (req, res) => {
   const { template_id, exercises, workout_date } = req.body;
   const user_id = req.user._id;
 
+  if (!ObjectId.isValid(template_id) || !ObjectId.isValid(user_id)) {
+    res.status(400);
+    throw new Error("Template ID or user ID is not valid");
+  }
+
   if (!template_id) {
     res.status(400);
     throw new Error("Template ID is required.");
@@ -90,6 +95,11 @@ const addWorkoutRecord = asyncHandler(async (req, res) => {
 const getUserWorkoutRecords = asyncHandler(async (req, res) => {
   const user_id = req.user._id;
 
+  if (!ObjectId.isValid(user_id)) {
+    res.status(400);
+    throw new Error("User ID is not valid.");
+  }
+
   try {
     const workoutRecords = await WorkoutRecord.find({ user_id });
 
@@ -116,6 +126,11 @@ const getUserWorkoutRecords = asyncHandler(async (req, res) => {
 const deleteWorkoutRecord = asyncHandler(async (req, res) => {
   const record_id = req.params.id;
   const user_id = req.user._id;
+
+  if (!ObjectId.isValid(record_id) || !ObjectId.isValid(user_id)) {
+    res.status(400);
+    throw new Error("Record ID or user ID is not valid");
+  }
 
   try {
     const deleteRecord = await WorkoutRecord.deleteOne({

@@ -1,5 +1,6 @@
 const WorkoutTemplate = require("../models/workoutTemplateModel");
 const asyncHandler = require("express-async-handler");
+const { ObjectId } = require("mongodb");
 
 //======================== ADD WORKOUT TEMPLATE ========================//
 
@@ -10,6 +11,11 @@ const asyncHandler = require("express-async-handler");
 const addWorkoutTemplate = asyncHandler(async (req, res) => {
   const { name, exercises } = req.body;
   const user_id = req.user._id;
+
+  if (!ObjectId.isValid(user_id)) {
+    res.status(400);
+    throw new Error("User ID is not valid.");
+  }
 
   if (!name) {
     res.status(400);
@@ -60,6 +66,11 @@ const addWorkoutTemplate = asyncHandler(async (req, res) => {
 const getUserWorkoutTemplates = asyncHandler(async (req, res) => {
   const user_id = req.user._id;
 
+  if (!ObjectId.isValid(user_id)) {
+    res.status(400);
+    throw new Error("User ID is not valid.");
+  }
+
   try {
     const workoutTemplates = await WorkoutTemplate.find({ user_id });
 
@@ -87,9 +98,9 @@ const updateWorkoutTemplate = asyncHandler(async (req, res) => {
   const template_id = req.params.id;
   const user_id = req.user._id;
 
-  if (!template_id) {
+  if (!ObjectId.isValid(template_id) || !ObjectId.isValid(user_id)) {
     res.status(400);
-    throw new Error("Template ID is required");
+    throw new Error("Template ID or user ID is not valid");
   }
 
   try {
@@ -123,6 +134,11 @@ const updateWorkoutTemplate = asyncHandler(async (req, res) => {
 const getUserWorkoutTemplate = asyncHandler(async (req, res) => {
   const template_id = req.params.id;
   const user_id = req.user._id;
+
+  if (!ObjectId.isValid(template_id) || !ObjectId.isValid(user_id)) {
+    res.status(400);
+    throw new Error("Template ID or user ID is not valid");
+  }
 
   try {
     const workoutTemplate = await WorkoutTemplate.findOne({
@@ -161,6 +177,11 @@ const deleteWorkoutTemplate = asyncHandler(async (req, res) => {
   const template_id = req.params.id;
   const user_id = req.user._id;
 
+  if (!ObjectId.isValid(template_id) || !ObjectId.isValid(user_id)) {
+    res.status(400);
+    throw new Error("Template ID or user ID is not valid");
+  }
+
   try {
     const deleteTemplate = await WorkoutTemplate.deleteOne({
       user_id,
@@ -188,6 +209,11 @@ const deleteWorkoutTemplate = asyncHandler(async (req, res) => {
 const getWorkoutTemplateExercises = asyncHandler(async (req, res) => {
   const template_id = req.params.id;
   const user_id = req.user._id;
+
+  if (!ObjectId.isValid(template_id) || !ObjectId.isValid(user_id)) {
+    res.status(400);
+    throw new Error("Template ID or user ID is not valid");
+  }
 
   try {
     const workoutTemplate = await WorkoutTemplate.findOne({
