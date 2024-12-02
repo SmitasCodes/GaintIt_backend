@@ -17,11 +17,6 @@ const addWorkoutRecord = asyncHandler(async (req, res) => {
     throw new Error("Template ID or user ID is not valid");
   }
 
-  if (!template_id) {
-    res.status(400);
-    throw new Error("Template ID is required.");
-  }
-
   try {
     const template = await WorkoutTemplate.findOne({
       _id: template_id,

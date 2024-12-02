@@ -17,24 +17,24 @@ const addWorkoutTemplate = asyncHandler(async (req, res) => {
     throw new Error("User ID is not valid.");
   }
 
-  if (!name) {
-    res.status(400);
-    throw new Error("Please enter your workout template name!");
-  }
-
-  const nameExist = await WorkoutTemplate.findOne({ name, user_id });
-
-  if (nameExist) {
-    res.status(400);
-    throw new Error("Workout template with same name exists!");
-  }
-
-  if (!exercises.length) {
+  if (Array.isArray(exercises) && !exercises.length) {
     res.status(400);
     throw new Error("Please add some exercises!");
   }
 
   try {
+    if (!name) {
+      res.status(400);
+      throw new Error("Please enter your workout template name!");
+    }
+
+    const nameExist = await WorkoutTemplate.findOne({ name, user_id });
+
+    if (nameExist) {
+      res.status(400);
+      throw new Error("Workout template with same name exists!");
+    }
+
     const workoutTemplate = await WorkoutTemplate.create({
       name,
       user_id: req.user._id,
@@ -88,43 +88,6 @@ const getUserWorkoutTemplates = asyncHandler(async (req, res) => {
   }
 });
 
-//======================== UPDATE WORKOUT TEMPLATE ========================//
-
-// @desc Update workout template by template id
-// @route PUT /api/workout-template/:id
-// @access PRIVATE
-
-const updateWorkoutTemplate = asyncHandler(async (req, res) => {
-  const template_id = req.params.id;
-  const user_id = req.user._id;
-
-  if (!ObjectId.isValid(template_id) || !ObjectId.isValid(user_id)) {
-    res.status(400);
-    throw new Error("Template ID or user ID is not valid");
-  }
-
-  try {
-    const updatedTemplate = await WorkoutTemplate.findOneAndUpdate(
-      { _id: template_id, user_id },
-      req.body
-    );
-
-    if (!updatedTemplate) {
-      res.status(404);
-      throw new Error("Template not found or no changes made");
-    } else {
-      res.status(200).json({
-        _id: updatedTemplate._id,
-        name: updatedTemplate.name,
-        exercises: updatedTemplate.exercises,
-      });
-    }
-  } catch (error) {
-    res.status(500);
-    console.error(error.message);
-  }
-});
-
 //======================== GET WORKOUT TEMPLATE ========================//
 
 // @desc Get user workout template by id
@@ -160,6 +123,43 @@ const getUserWorkoutTemplate = asyncHandler(async (req, res) => {
     } else {
       res.status(404);
       throw new Error("Workout template not found");
+    }
+  } catch (error) {
+    res.status(500);
+    console.error(error.message);
+  }
+});
+
+//======================== UPDATE WORKOUT TEMPLATE ========================//
+
+// @desc Update workout template by template id
+// @route PUT /api/workout-template/:id
+// @access PRIVATE
+
+const updateWorkoutTemplate = asyncHandler(async (req, res) => {
+  const template_id = req.params.id;
+  const user_id = req.user._id;
+
+  if (!ObjectId.isValid(template_id) || !ObjectId.isValid(user_id)) {
+    res.status(400);
+    throw new Error("Template ID or user ID is not valid");
+  }
+
+  try {
+    const updatedTemplate = await WorkoutTemplate.findOneAndUpdate(
+      { _id: template_id, user_id },
+      req.body
+    );
+
+    if (!updatedTemplate) {
+      res.status(404);
+      throw new Error("Template not found or no changes made");
+    } else {
+      res.status(200).json({
+        _id: updatedTemplate._id,
+        name: updatedTemplate.name,
+        exercises: updatedTemplate.exercises,
+      });
     }
   } catch (error) {
     res.status(500);
