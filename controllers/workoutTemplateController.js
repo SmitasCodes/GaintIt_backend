@@ -79,8 +79,9 @@ const getUserWorkoutTemplates = asyncHandler(async (req, res) => {
         templates: workoutTemplates,
       });
     } else {
-      res.status(404);
-      throw new Error("No workout template found");
+      res.status(404).json({
+        message: "No workout template found",
+      });
     }
   } catch (error) {
     res.status(500);
