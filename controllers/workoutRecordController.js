@@ -1,6 +1,7 @@
 const WorkoutTemplate = require("../models/workoutTemplateModel");
 const WorkoutRecord = require("../models/workoutRecordModel");
 const asyncHandler = require("express-async-handler");
+const { ObjectId } = require("mongodb");
 
 //======================== ADD WORKOUT RECORD ========================//
 
@@ -29,7 +30,7 @@ const addWorkoutRecord = asyncHandler(async (req, res) => {
       );
     }
 
-    // Exercises validation, checking if exercises names matches templates exercises names. Also checking if reps/weight/sets are positive and if reps array length is equal sets array.
+    // Exercises validation, checking if exercises names matches templates exercises names. Also checking if reps/weight/sets are positive and if reps array length is equal to sets length.
     const templateExercisesNames = template.exercises.map(
       (e) => e.exercise_name
     );
@@ -58,7 +59,8 @@ const addWorkoutRecord = asyncHandler(async (req, res) => {
       throw new Error("Some exercises have invalid data (weight, reps, sets).");
     }
 
-    if (!workout_date || isNaN(new Date(workout_date).getTime())) {
+    let date = workout_date ? new Date(workout_date) : new Date();
+    if (isNaN(date.getTime())) {
       throw new Error("Invalid date provided.");
     }
 
@@ -67,6 +69,7 @@ const addWorkoutRecord = asyncHandler(async (req, res) => {
       template_name: template.name,
       user_id,
       exercises,
+      workout_date: date,
     });
 
     if (!workoutRecord) {

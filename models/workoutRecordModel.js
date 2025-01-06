@@ -28,7 +28,7 @@ const WorkoutRecord = mongoose.model(
       ],
       workout_date: {
         type: Date,
-        default: Date.now,
+        required: true,
       },
     },
     {
