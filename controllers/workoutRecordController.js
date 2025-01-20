@@ -98,21 +98,17 @@ const getUserWorkoutRecords = asyncHandler(async (req, res) => {
     throw new Error("User ID is not valid.");
   }
 
-  try {
-    const workoutRecords = await WorkoutRecord.find({ user_id });
-
-    if (workoutRecords && workoutRecords.length > 0) {
-      res.status(200).json({
-        records: workoutRecords,
-      });
-    } else {
-      res.status(404);
-      throw new Error("No workout records found");
-    }
-  } catch (error) {
-    res.status(500);
-    console.error(error.message);
+  const workoutRecords = await WorkoutRecord.find({ user_id });
+   
+  if (workoutRecords && workoutRecords.length > 0) {
+    res.status(200).json({
+      records: workoutRecords,
+    });
+  } else {
+    // res.status(404);
+    throw new Error("No workout records found");
   }
+
 });
 
 //======================== DELETE WORKOUT RECORD ========================//
