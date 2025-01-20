@@ -22,6 +22,7 @@ const addWorkoutRecord = asyncHandler(async (req, res) => {
     _id: template_id,
     user_id,
   });
+  
   if (!template) {
     res.status(404);
     throw new Error("Workout template not found.");

@@ -39,18 +39,18 @@ const registerUser = (Model) =>
       password: hashedPassword,
     });
 
-    if (user) {
-      res.status(201).json({
-        _id: user.id,
-        username: user.username,
-        email: user.email,
-        token: generateToken(user._id),
-        role: user.role,
-      });
-    } else {
+    if (!user) {
       res.status(400);
       throw new Error("Invalid user data");
     }
+
+    res.status(201).json({
+      _id: user.id,
+      username: user.username,
+      email: user.email,
+      token: generateToken(user._id),
+      role: user.role,
+    });
   });
 
 //======================== LOGIN USER ========================//
