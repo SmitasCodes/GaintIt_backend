@@ -17,14 +17,19 @@ const addWorkoutTemplate = asyncHandler(async (req, res) => {
     throw new Error("User ID is not valid.");
   }
 
-  if (Array.isArray(exercises) && !exercises.length) {
-    res.status(400);
-    throw new Error("Exercises is missing!");
-  }
-
   if (!name) {
     res.status(400);
     throw new Error("Please enter your workout template name!");
+  }
+
+  if (Array.isArray(exercises) && !exercises.length) {
+    res.status(400);
+    throw new Error("Exercises are missing");
+  }
+
+  if (exercises.some((exercise) => exercise.sets <= 0)) {
+    res.status(400);
+    throw new Error("Sets value is invalid");
   }
 
   const nameExist = await WorkoutTemplate.findOne({ name, user_id });
@@ -72,6 +77,8 @@ const getUserWorkoutTemplates = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("No workout template found");
   }
+
+  console.log(workoutTemplates);
 
   res.status(200).json({
     templates: workoutTemplates,
@@ -199,7 +206,7 @@ const getWorkoutTemplateExercises = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("No template exercises found");
   }
-  
+
   res.status(200).json({ exercises: workoutTemplate.exercises });
 });
 
